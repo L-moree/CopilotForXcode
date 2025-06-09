@@ -1,1 +1,44 @@
-l
+import requests
+
+def samarkan_info_ip(ip):
+    try:
+        response = requests.get(f"http://ipinfo.io/{ip}/json").json()
+        
+        if 'ip' in response and 'city' in response and 'region' in response and 'country' in response and 'loc' in response and 'org' in response and 'postal' in response and 'timezone' in response:
+            ip_samaran = ".".join([response['ip'].split('.')[0], response['ip'].split('.')[1], 'xx', 'xx'])
+            city_samaran = response['city'][:2] + '**'
+            region_samaran = response['region'][:2] + '**'
+            country_samaran = response['country']
+            loc_samaran = 'xx.xxxx,xxx.xxxx'
+            org_samaran = response['org'][:5] + '*****'
+            postal_samaran = response['postal'][:2] + '***'
+            timezone_samaran = response['timezone'].split('/')[0] + '/**'
+            
+            info_samaran = {
+                'ip': ip_samaran,
+                'city': city_samaran,
+                'region': region_samaran,
+                'country': country_samaran,
+                'loc': loc_samaran,
+                'org': org_samaran,
+                'postal': postal_samaran,
+                'timezone': timezone_samaran
+            }
+            
+            return info_samaran
+        else:
+            return "Informasi IP tidak lengkap"
+    
+    except requests.exceptions.RequestException as e:
+        return "Gagal menghubungi API"
+    except Exception as e:
+        return "Terjadi kesalahan"
+
+ip_asli = "103.133.61.54"
+info_samaran = samarkan_info_ip(ip_asli)
+
+if isinstance(info_samaran, dict):
+    for key, value in info_samaran.items():
+        print(f"{key.capitalize()}: {value}")
+else:
+    print(info_samaran)
